@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User;
 
 /**
  * نموذج Post
@@ -32,9 +33,13 @@ class Post extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function favoret_post()
+    {
+        return $this->belongsToMany(User::class);
     }
 }

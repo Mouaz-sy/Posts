@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -64,4 +65,10 @@ class UserController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logout Successful']);
     }
+
+    public function AllRole()
+    {
+        $TheRole=Post::all();
+        return response()->json($TheRole,200);
+    }    
 }   

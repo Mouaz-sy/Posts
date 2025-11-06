@@ -41,7 +41,7 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:1000',
             'body' => 'required|string|max:1000',
-            'userId'
+            'userId'    
         ]);
 
         $post = Post::create([
@@ -101,7 +101,7 @@ class PostController extends Controller
             'id' => $post->id,
             'title' => $post->title,
             'body' => $post->body,
-            'user_id' => $post->user_id,
+           'user_id' => $post->user_id,
             'created_at' => $post->created_at,
             'updated_at' => $post->updated_at,
         ];

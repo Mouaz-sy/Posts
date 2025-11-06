@@ -24,10 +24,15 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function posts(){
+    public function posts()
+    {
         return $this->hasMany(Post::class);
-    } 
-    
+    }
+    public function favoret_post()
+    {
+        return $this->belongsToMany(FavoretUsersPoste::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
