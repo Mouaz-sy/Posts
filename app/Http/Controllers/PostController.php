@@ -9,30 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        // استرجاع جميع المنشورات
         $posts = Post::orderBy('created_at', 'desc')->get();
 
-        // تحويل كل منشور لإرسال حقل 'title' بدلاً من 'title'
         $formattedPosts = $posts->map(function ($post) {
             return [
                 'id' => $post->id,
-                'title' => $post->title, // هذا هو التعديل الضروري: تحويل title إلى title
+                'title' => $post->title,
                 'body' => $post->body,
                 'user_id' => $post->user_id,
                 'created_at' => $post->created_at,
                 'updated_at' => $post->updated_at,
-                // يمكنك إضافة حقول أخرى هنا إن وجدت
             ];
         });
 
         return response()->json($formattedPosts);
     }
-
 
     public function store(Request $request)
     {
@@ -41,7 +35,6 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:1000',
             'body' => 'required|string|max:1000',
-            'userId'    
         ]);
 
         $post = Post::create([
@@ -54,7 +47,7 @@ class PostController extends Controller
             'id' => $post->id,
             'title' => $post->title,
             'body' => $post->body,
-            'user_id' => $post->user_id,
+            'user_id' => $userId,
             'created_at' => $post->created_at,
             'updated_at' => $post->updated_at,
         ];
@@ -62,16 +55,13 @@ class PostController extends Controller
         return response()->json($formattedPost, 201);
     }
 
-    /**
-     * عرض منشور محدد (GET /api/posts/{post}).
-     * يتم تحويل حقل 'title' إلى 'title' ليتوافق مع React.
-     */
+
     public function show(Post $post)
     {
-        // تحويل حقل 'title' إلى 'title' قبل الإرسال
+        $userId = Auth::user()->id;
         $formattedPost = [
             'id' => $post->id,
-            'title' => $post->title, // هذا هو التعديل الضروري: تحويل title إلى title
+            'title' => $post->title,
             'body' => $post->body,
             'user_id' => $post->user_id,
             'created_at' => $post->created_at,
@@ -84,37 +74,37 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        $userId = Auth::user()->id;
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:1000',
             'body' => 'required|string|max:1000',
         ]);
+        if ($post->user_id === $userId) {
+            $post->update([
+                'title' => $validatedData['title'],
+                'body' => $validatedData['body'],
+                'user_id' => $userId,
+            ]);
 
-        // التحديث: تخزين قيمة 'title' في عمود 'title'
-        $post->update([
-            'title' => $validatedData['title'],
-            'body' => $validatedData['body'],
-            'user_id' => $request['user_id'],
-        ]);
-
-        // نقوم بإعادة المنشور المُحدَّث مع تحويل حقل 'title' إلى 'title'
-        $formattedPost = [
-            'id' => $post->id,
-            'title' => $post->title,
-            'body' => $post->body,
-           'user_id' => $post->user_id,
-            'created_at' => $post->created_at,
-            'updated_at' => $post->updated_at,
-        ];
-
-        return response()->json($formattedPost);
+            $formattedPost = [
+                'id' => $post->id,
+                'title' => $post->title,
+                'body' => $post->body,
+                'user_id' => $post->user_id,
+                'created_at' => $post->created_at,
+                'updated_at' => $post->updated_at,
+            ];
+            return response()->json(['massage' => 'Editing Succecfuly', $formattedPost]);
+        } else return response()->json(['massage' => 'You Cannt Edit The Post'], 403);
     }
 
-    /**
-     * حذف منشور محدد (DELETE /api/posts/{post}).
-     */
     public function destroy(Post $post)
     {
-        $post->delete();
-        return response()->json(['massage' => 'Post Was Deleted'], 200);
+        $userId = Auth::user()->id;
+        if ($post->user_id === $userId) {
+            $post->delete();
+            return response()->json(['massage' => 'Post Was Deleted'], 200);
+        } else return response()->json(['massage' => 'You Cannt Delete The Post'], 403);
     }
 }

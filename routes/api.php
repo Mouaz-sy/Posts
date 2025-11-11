@@ -9,9 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoretUsersPosteController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('/user',[UserController::class,'userInfo'])->middleware('auth:sanctum');
 
 Route::post('/register',[UserController::class,'register']);
 Route::post('/login',[UserController::class,'login']);
@@ -23,5 +21,4 @@ Route::get('/users_role',[UserController::class,'AllRole'])->middleware('auth:sa
 
 Route::apiResource('/favoret',FavoretUsersPosteController::class)->middleware('auth:sanctum');
 
-Route::apiResource('profile',ProfileController::class);
-//->middleware('auth.sanctum');
+Route::apiResource('profile',ProfileController::class)->middleware('auth:sanctum');

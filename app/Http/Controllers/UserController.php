@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
+use App\Mail\WelcomMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route; 
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller
 {
@@ -15,21 +18,21 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email|max:255', 
-            'password' => 'required|min:8|string|confirmed', 
+            'email' => 'required|string|email|unique:users,email|max:255',
+            'password' => 'required|min:8|string|confirmed',
         ]);
 
-        
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
 
+        Mail::to($user->email)->send(new WelcomMail($user));
         return response()->json([
-            'message' => 'User Registered Successfully', 
+            'message' => 'User Registered Successfully',
             'User' => $user,
-        ], 201); 
+        ], 201);
     }
 
     public function login(Request $request)
@@ -68,7 +71,14 @@ class UserController extends Controller
 
     public function AllRole()
     {
-        $TheRole=Post::all();
-        return response()->json($TheRole,200);
-    }    
-}   
+        $TheRole = Post::all();
+        return response()->json($TheRole, 200);
+    }
+
+    public function userInfo()
+    {
+        // $userId = Auth::user()->id;
+        $userInfo = User::with('profile')->findOrFail(Auth::user()->id);
+        return new UserResource($userInfo);
+    }
+}
