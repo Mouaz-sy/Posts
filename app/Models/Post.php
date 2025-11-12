@@ -22,7 +22,8 @@ class Post extends Model
     protected $fillable = [
         'title',
         'body',
-        'user_id'
+        'user_id',
+        'category_id'
     ];
 
     /**
@@ -41,5 +42,9 @@ class Post extends Model
     public function favoret_post()
     {
         return $this->belongsToMany(User::class);
+    }
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_posts', 'post_id', 'category_id');
     }
 }

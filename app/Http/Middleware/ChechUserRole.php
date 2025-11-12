@@ -16,8 +16,13 @@ class ChechUserRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::user()->role == 'admin')
-        return $next($request);
-        return response()->json(['message' => 'No Permations'], 403);
+        if (!Auth::check()) {
+            // إذا لم يكن هناك مستخدم مسجل الدخول، أرجع استجابة "غير مصرح به"
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        if (Auth::user()->role == 'admin')
+            return $next($request);
+        else return response()->json(['message' => 'No Permations'], 403);
     }
 }
