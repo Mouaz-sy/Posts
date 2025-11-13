@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Dom\Comment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use PhpParser\Node\Stmt\Return_;
+// use PhpParser\Node\Stmt\Return_;
 
 class User extends Authenticatable
 {
@@ -33,8 +35,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(FavoretUsersPoste::class);
     }
-    public function profile() {
+    public function profile()
+    {
         return $this->hasOne(Profile::class);
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     /**

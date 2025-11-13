@@ -23,7 +23,7 @@ class Post extends Model
         'title',
         'body',
         'user_id',
-        'category_id'
+        'category_id',
     ];
 
     /**
@@ -46,5 +46,9 @@ class Post extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_posts', 'post_id', 'category_id');
+    }
+    public function comments()
+    {
+        return $this->hasMany(CommentsPost::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class PostController extends Controller
             'title' => $validatedData['title'],
             'body' => $validatedData['body'],
             'user_id' => $userId,
+            'category_id' => $request->category_id,
         ]);
 
         $formattedPost = [
@@ -48,6 +50,7 @@ class PostController extends Controller
             'title' => $post->title,
             'body' => $post->body,
             'user_id' => $userId,
+            'category' => Category::where('id', $post->category_id)->get('name'),
             'created_at' => $post->created_at,
             'updated_at' => $post->updated_at,
         ];

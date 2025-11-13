@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryPostController;
+use App\Http\Controllers\CommentsPostController;
 use Illuminate\Http\Request;
 use App\Models\FavoretUsersPoste;
 use App\Http\Controllers\Controller;
@@ -27,7 +28,9 @@ Route::apiResource('/profile',ProfileController::class)->middleware('auth:sanctu
 
 Route::apiResource('/categories',CategoryController::class)->middleware('auth:sanctum');
 
-    // مسارات لإدارة العلاقات بين المنشورات والفئات
-    Route::get('posts/{post}/categories', [CategoryPostController::class, 'indexForPost']);
-    Route::post('posts/{post}/categories', [CategoryPostController::class, 'attachCategories']);
-    Route::delete('posts/{post}/categories/{category}', [CategoryPostController::class, 'detachCategory']);
+// مسارات لإدارة العلاقات بين المنشورات والفئات
+Route::get('posts/{post}/categories', [CategoryPostController::class, 'indexForPost']);
+Route::post('posts/{post}/categories', [CategoryPostController::class, 'attachCategories']);
+Route::delete('posts/{post}/categories/{category}', [CategoryPostController::class, 'detachCategory']);
+
+Route::apiResource('posts.comments',CommentsPostController::class)->middleware('auth:sanctum');
